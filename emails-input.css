@@ -1,0 +1,88 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    font-family: 'Open Sans', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+}
+
+button span div {
+    font-size: 14px;
+    line-height: 24px;
+}
+
+span b {
+    font-weight: 600;
+}
+
+#form-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#main-form {
+    /*position: relative;*/
+    background: #FFFFFF;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    width: 540px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-form__title {
+    font-size: 20px;
+    line-height: 27px;
+}
+
+#emails-input {
+    padding-top: 24px;
+}
+
+#main-form__content {
+    background: #F8F8F7;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 50px 24px 50px;
+}
+
+#main-form__buttons {
+    display: flex;
+    justify-content: flex-start;
+    padding: 32px 50px 32px 50px;
+}
+
+
+.button {
+    background: #4262FF;
+    border-radius: 6px;
+    height: 40px;
+}
+
+.emails-form {
+    background: #FFFFFF;
+    border: 1px solid #C3C2CF;
+    box-sizing: border-box;
+    border-radius: 4px;
+    min-height: 96px;
+    max-height: 96px;
+}
+
+.emails-form__input {
+    position: relative;
+    margin-left: 8px;
+}
+
+.emails-form__input:empty::before {
+    position: absolute;
+    content: attr(data-placeholder);
+    color: #C3C2CF;
+    top: 0;
+    bottom: 0;
+    white-space: nowrap;
+}

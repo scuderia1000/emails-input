@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="emails-input.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <title>Emails Editor</title>
+</head>
+<body>
+    <div id="form-container">
+        <div id="main-form">
+            <div id="main-form__content">
+                <span class="main-form__title">Share <b>Board name</b> with others</span>
+                <div id="emails-input"></div>
+            </div>
+            <div id="main-form__buttons">
+                <button class="button">Add email</button>
+                <button class="button">Get emails count</button>
+            </div>
+        </div>
+    </div>
+    <script src="emails-input.js"></script>
+    <script>
+        var inputContainerNode = document.querySelector('#emails-input');
+        var emailsInput = EmailsInput(inputContainerNode);
+    </script>
+</body>
+</html>
