@@ -109,7 +109,7 @@ button:hover {
 .emails-form__input {
     position: relative;
     margin: 8px;
-    min-width: 60px;
+    min-width: 125px;
     display: block;
     flex: 1;
 }
