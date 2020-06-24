@@ -95,6 +95,12 @@ button:hover {
     border-radius: 4px;
     min-height: 96px;
     max-height: 96px;
+    overflow-y: auto;
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    position: relative;
+    width: 100%;
 }
 .emails-form:focus {
     outline: 0;
@@ -104,8 +110,8 @@ button:hover {
     position: relative;
     margin: 8px;
     min-width: 60px;
-    flex: 1;
     display: block;
+    flex: 1;
 }
 
 .emails-form__input:empty::before {
@@ -119,4 +125,34 @@ button:hover {
 
 .emails-form__input:focus {
     outline: 0;
+}
+
+.emails-form__tag {
+    display: inline-flex;
+    align-items: center;
+    margin: 8px 0 4px 8px;
+    position: relative;
+    background: rgba(102, 153, 255, 0.2);
+    border-radius: 100px;
+}
+
+.emails-form__tag > div {
+    box-sizing: border-box;
+    padding: 0 4px 0 10px;
+}
+
+.emails-form__tag-removeButton {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: black;
+    width: 14px;
+    height: 14px;
+    outline: none;
+    border: none;
+    background: none;
+    border-radius: 0;
+    padding: 0;
+    margin-right: 6px;
 }
