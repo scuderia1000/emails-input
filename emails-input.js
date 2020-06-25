@@ -6,11 +6,10 @@
     function EmailsInput(inputContainer, options) {
         if (!inputContainer) return;
 
-        if (!(this instanceof EmailsInput)){
+        if (!(this instanceof EmailsInput)) {
             var obj = Object.create(EmailsInput.prototype);
             return EmailsInput.apply(obj, arguments);
         }
-
 
 
         var emailsForm = this.getNodeElement(this.templates.main()),
@@ -54,9 +53,11 @@
                 </div>';
             },
 
-            tag: function (text) {
+            tag: function (text, data) {
+                var className = data ? data.className : '';
+
                 return ' \
-                <div class="emails-form__tag"> \
+                <div class="emails-form__tag ' + className + '"> \
                     <div> \
                         <span class="emails-form__tag-text">' + text + '</span> \
                     </div> \
@@ -96,6 +97,11 @@
                     '    border-radius: 0;\n' +
                     '    padding: 0;\n' +
                     '    margin-right: 6px;\n' +
+                    '}',
+                    '.emails-form__tag_invalid {\n' +
+                    '    background: none;\n' +
+                    '    border-radius: 0;\n' +
+                    '    border-bottom: 1px dashed #D92929;\n' +
                     '}'
                 ]
             },
@@ -108,12 +114,12 @@
             'alexander@miro.com'
         ],
 
-        onBlur: function(e) {
+        onBlur: function (e) {
             var text = e.target.textContent;
             this.addEmail(text);
         },
 
-        onInput: function(e) {
+        onInput: function (e) {
             var text = e.target.textContent.trim();
             switch (e.key) {
                 case 'Enter':
@@ -128,7 +134,10 @@
 
             this.DOM.input.textContent = '';
 
-            var emailEl = this.getNodeElement(this.templates.tag(text.trim())),
+            var data = {
+                    className: this.isEmailValid(text) ? '' : 'emails-form__tag_invalid'
+                },
+                emailEl = this.getNodeElement(this.templates.tag(text.trim(), data)),
                 removeButton = emailEl.querySelector('.emails-form__tag-removeButton');
 
             removeButton.addEventListener("click", this.removeEmail.bind(this));
@@ -140,7 +149,7 @@
             this.DOM.emailsForm.removeChild(emailEl);
         },
 
-        getEmailNode: function(node) {
+        getEmailNode: function (node) {
             if (node.classList.contains('emails-form__tag')) {
                 return node;
             } else {
@@ -148,12 +157,16 @@
             }
         },
 
-        getNodeElement: function(template) {
+        getNodeElement: function (template) {
             var parser = new DOMParser(),
                 nodeEl = parser.parseFromString(template, "text/html");
 
             return nodeEl.body.firstElementChild;
-    }
+        },
+
+        isEmailValid: function (email) {
+            return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
+        }
     };
 
     return EmailsInput;

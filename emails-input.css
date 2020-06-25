@@ -136,6 +136,12 @@ button:hover {
     border-radius: 100px;
 }
 
+.emails-form__tag_invalid {
+    background: none;
+    border-radius: 0;
+    border-bottom: 1px dashed #D92929;
+}
+
 .emails-form__tag > div {
     box-sizing: border-box;
     padding: 0 4px 0 10px;
