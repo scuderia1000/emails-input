@@ -14,8 +14,8 @@
             <div id="emails-input"></div>
         </div>
         <div id="main-form__buttons">
-            <button class="ripple" onclick="addRandomEmail()">Add email</button>
-            <button class="ripple" onclick="getValidEmailsCount()">Get emails count</button>
+            <button class="ripple" onclick="addRandomEmail(emailsInput)">Add email</button>
+            <button class="ripple" onclick="getValidEmailsCount(emailsInput)">Get emails count</button>
         </div>
     </div>
 </div>
@@ -24,21 +24,12 @@
     var inputContainerNode = document.querySelector('#emails-input');
     var emailsInput = EmailsInput(inputContainerNode);
 
-    var addRandomEmail = function () {
-            var email = Math.random().toString(36).substring(2, getRandomInteger(5, 11)),
-                domain = Math.random().toString(36).substring(2, getRandomInteger(5, 9)),
-                domainZone = Math.random().toString(36).replace(/[0-9]/g, '').substring(0, getRandomInteger(2, 4));
-
-            emailsInput.addEmail(email + '@' + domain + domainZone);
+    var addRandomEmail = function (component) {
+            component.addRandomEmail();
         },
-        getValidEmailsCount = function () {
-            debugger
+        getValidEmailsCount = function (component) {
+            alert('Valid email count: ' + component.validEmailCount);
         };
-
-    var getRandomInteger = function (min, max) {
-        var rand = min + Math.random() * (max + 1 - min);
-        return Math.floor(rand);
-    }
 </script>
 </body>
 </html>

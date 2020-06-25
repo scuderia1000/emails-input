@@ -18,11 +18,10 @@
 
         inputContainer.appendChild(emailsForm);
 
-        // TODO раскомментировать, когда будет сделаны все стили emails-form
-        // document.head.appendChild(documentStyle);
-        // for (var i = 0; i < style.length; i++) {
-        //     documentStyle.sheet.insertRule(style[i], i);
-        // }
+        document.head.appendChild(documentStyle);
+        for (var i = 0; i < style.length; i++) {
+            documentStyle.sheet.insertRule(style[i], i);
+        }
 
         this.DOM = {
             input: emailsForm.querySelector('.emails-form__input'),
@@ -43,6 +42,8 @@
 
     EmailsInput.prototype = {
         isIE: window.document.documentMode,
+
+        validEmailCount: 0,
 
         templates: {
             main: function () {
@@ -134,7 +135,6 @@
             switch (e.key) {
                 case 'Enter':
                 case ',':
-                    debugger
                     e.preventDefault();
                     this.addEmail(text);
             }
@@ -156,8 +156,9 @@
 
             this.DOM.input.textContent = '';
 
-            var data = {
-                    className: this.isEmailValid(text) ? '' : 'emails-form__tag_invalid'
+            var isEmailValid = this.isEmailValid(text),
+                data = {
+                    className: isEmailValid ? '' : 'emails-form__tag_invalid'
                 },
                 emailEl = this.getNodeElement(this.templates.tag(text.trim(), data)),
                 removeButton = emailEl.querySelector('.emails-form__tag-removeButton');
@@ -165,12 +166,20 @@
             removeButton.addEventListener("click", this.removeEmail.bind(this));
             this.DOM.input.parentNode.insertBefore(emailEl, this.DOM.input);
 
-            this.DOM.emailsForm.scrollTo(0, this.DOM.emailsForm.scrollHeight);
+            if (isEmailValid) {
+                this.validEmailCount++;
+            }
+
+            if (!this.isIE) this.DOM.emailsForm.scrollTo(0, this.DOM.emailsForm.scrollHeight);
         },
 
         removeEmail: function (e) {
             var emailEl = this.getEmailNode(e.target);
             this.DOM.emailsForm.removeChild(emailEl);
+
+            if (!emailEl.classList.contains('emails-form__tag_invalid')) {
+                this.validEmailCount--;
+            }
         },
 
         getEmailNode: function (node) {
@@ -191,6 +200,19 @@
         isEmailValid: function (email) {
             var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return re.test(String(email).toLowerCase());
+        },
+
+        addRandomEmail: function () {
+            var email = Math.random().toString(36).substring(2, this.getRandomInteger(5, 11)),
+                domain = Math.random().toString(36).substring(2, this.getRandomInteger(5, 9)),
+                domainZone = Math.random().toString(36).replace(/[0-9]/g, '').substring(0, this.getRandomInteger(2, 4));
+
+            this.addEmail(email + '@' + domain + domainZone);
+        },
+
+        getRandomInteger: function (min, max) {
+            var rand = min + Math.random() * (max + 1 - min);
+            return Math.floor(rand);
         }
     };
 
