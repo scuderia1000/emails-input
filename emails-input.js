@@ -1,3 +1,8 @@
+/**
+ * Simple email input form with tags
+ *
+ * Created by vvershov on 24.06.2020
+ */
 ;(function (node, func) {
     node.EmailsInput = func();
 }(this, function () {
@@ -22,6 +27,12 @@
         for (var i = 0; i < style.length; i++) {
             documentStyle.sheet.insertRule(style[i], i);
         }
+
+        // add google Open Sans font
+        var fontLink = document.createElement('link');
+        fontLink.rel = 'stylesheet';
+        fontLink.href = 'https://fonts.googleapis.com/css2?family=Open+Sans&display=swap';
+        document.head.appendChild(fontLink);
 
         this.DOM = {
             input: emailsForm.querySelector('.emails-form__input'),
@@ -213,6 +224,10 @@
         getRandomInteger: function (min, max) {
             var rand = min + Math.random() * (max + 1 - min);
             return Math.floor(rand);
+        },
+
+        getValidEmailsCount: function () {
+            alert('Valid email count: ' + this.validEmailCount);
         }
     };
 
