@@ -37,6 +37,8 @@
         this.DOM.input.addEventListener("keypress", this.onInput.bind(this));
         this.DOM.input.addEventListener("blur", this.onBlur.bind(this));
         this.DOM.input.addEventListener("paste", this.onPaste.bind(this));
+
+        return this;
     }
 
     EmailsInput.prototype = {
