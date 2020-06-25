@@ -83,7 +83,7 @@
                     '.emails-form__input:focus {outline: 0; }',
                     '.emails-form__tag {display: inline-flex; align-items: center; margin: 8px 0 4px 8px; position: relative; ' +
                     '   background: rgba(102, 153, 255, 0.2); border-radius: 100px;}',
-                    '.emails-form__tag > div { box-sizing: border-box; padding: 0 4px 0 10px;}',
+                    '.emails-form__tag > div { box-sizing: border-box; padding: 0 4px 0 10px; max-height: 24px;}',
                     '.emails-form__tag-removeButton {\n' +
                     '    display: inline-flex;\n' +
                     '    justify-content: center;\n' +
@@ -103,6 +103,13 @@
                     '    background: none;\n' +
                     '    border-radius: 0;\n' +
                     '    border-bottom: 1px dashed #D92929;\n' +
+                    '}',
+                    '.emails-form__tag-text {\n' +
+                    '    overflow: hidden;\n' +
+                    '    white-space: nowrap;\n' +
+                    '    -ms-text-overflow: ellipsis;\n' +
+                    '    text-overflow: ellipsis;\n' +
+                    '    display: inline-block;\n' +
                     '}'
                 ]
             },
@@ -125,6 +132,7 @@
             switch (e.key) {
                 case 'Enter':
                 case ',':
+                    debugger
                     e.preventDefault();
                     this.addEmail(text);
             }
@@ -179,7 +187,8 @@
         },
 
         isEmailValid: function (email) {
-            return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
+            var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(String(email).toLowerCase());
         }
     };
 
