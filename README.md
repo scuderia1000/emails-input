@@ -1,6 +1,7 @@
 # Emails input - simple tags emails input component
 
 ![alt text](https://github.com/scuderia1000/emails-input/EmailsInput.jpg?raw=true)
+[](EmailsInput.jpg)
 
 Transform input text to tags component.
 
