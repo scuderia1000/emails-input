@@ -26,15 +26,17 @@
         // }
 
         this.DOM = {
-            input: emailsForm.querySelector('.emails-form__input')
+            input: emailsForm.querySelector('.emails-form__input'),
+            emailsForm: emailsForm
         };
 
         // add test tags
         for (var i = 0; i < this.testEmails.length; i++) {
-            this.DOM.input.parentNode.insertBefore(this.getNodeElement(this.templates.tag(this.testEmails[i])), this.DOM.input);
+            this.addEmail(this.testEmails[i]);
         }
 
         this.DOM.input.addEventListener("keypress", this.onInput.bind(this));
+        this.DOM.input.addEventListener("blur", this.onBlur.bind(this));
     }
 
     EmailsInput.prototype = {
@@ -106,6 +108,11 @@
             'alexander@miro.com'
         ],
 
+        onBlur: function(e) {
+            var text = e.target.textContent;
+            this.addEmail(text);
+        },
+
         onInput: function(e) {
             var text = e.target.textContent.trim();
             switch (e.key) {
@@ -117,10 +124,28 @@
         },
 
         addEmail: function (text) {
+            if (!text) return;
+
             this.DOM.input.textContent = '';
 
-            var emailEl = this.getNodeElement(this.templates.tag(text));
+            var emailEl = this.getNodeElement(this.templates.tag(text.trim())),
+                removeButton = emailEl.querySelector('.emails-form__tag-removeButton');
+
+            removeButton.addEventListener("click", this.removeEmail.bind(this));
             this.DOM.input.parentNode.insertBefore(emailEl, this.DOM.input);
+        },
+
+        removeEmail: function (e) {
+            var emailEl = this.getEmailNode(e.target);
+            this.DOM.emailsForm.removeChild(emailEl);
+        },
+
+        getEmailNode: function(node) {
+            if (node.classList.contains('emails-form__tag')) {
+                return node;
+            } else {
+                return this.getEmailNode(node.parentNode);
+            }
         },
 
         getNodeElement: function(template) {
