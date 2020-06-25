@@ -36,6 +36,7 @@
 
         this.DOM.input.addEventListener("keypress", this.onInput.bind(this));
         this.DOM.input.addEventListener("blur", this.onBlur.bind(this));
+        this.DOM.input.addEventListener("paste", this.onPaste.bind(this));
     }
 
     EmailsInput.prototype = {
@@ -129,6 +130,17 @@
             }
         },
 
+        onPaste: function(e) {
+            e.preventDefault();
+            var pastedData = (e.clipboardData || window.clipboardData).getData('text');
+            if (pastedData) {
+                var emails = pastedData.split(',');
+                for (var i = 0; i < emails.length; i++) {
+                    this.addEmail(emails[i].trim());
+                }
+            }
+        },
+
         addEmail: function (text) {
             if (!text) return;
 
@@ -142,6 +154,8 @@
 
             removeButton.addEventListener("click", this.removeEmail.bind(this));
             this.DOM.input.parentNode.insertBefore(emailEl, this.DOM.input);
+
+            this.DOM.emailsForm.scrollTo(0, this.DOM.emailsForm.scrollHeight);
         },
 
         removeEmail: function (e) {
