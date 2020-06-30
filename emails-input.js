@@ -3,61 +3,11 @@
  *
  * Created by vvershov on 24.06.2020
  */
-;(function (node, func) {
-    node.EmailsInput = func();
-}(this, function () {
-    "use strict";
+var EmailsInput = (function(window, document) {
+    'use strict';
 
-    function EmailsInput(inputContainer, options) {
-        if (!inputContainer) return;
-
-        if (!(this instanceof EmailsInput)) {
-            var obj = Object.create(EmailsInput.prototype);
-            return EmailsInput.apply(obj, arguments);
-        }
-
-
-        var emailsForm = this.getNodeElement(this.templates.main()),
-            documentStyle = document.createElement('style'),
-            style = this.templates.style();
-
-        inputContainer.appendChild(emailsForm);
-
-        document.head.appendChild(documentStyle);
-        for (var i = 0; i < style.length; i++) {
-            documentStyle.sheet.insertRule(style[i], i);
-        }
-
-        // add google Open Sans font
-        var fontLink = document.createElement('link');
-        fontLink.rel = 'stylesheet';
-        fontLink.href = 'https://fonts.googleapis.com/css2?family=Open+Sans&display=swap';
-        document.head.appendChild(fontLink);
-
-        this.DOM = {
-            input: emailsForm.querySelector('.emails-form__input'),
-            emailsForm: emailsForm
-        };
-
-        // add test tags
-        for (var i = 0; i < this.testEmails.length; i++) {
-            this.addEmail(this.testEmails[i]);
-        }
-
-        this.DOM.input.addEventListener("keypress", this.onInput.bind(this));
-        this.DOM.input.addEventListener("blur", this.onBlur.bind(this));
-        this.DOM.input.addEventListener("paste", this.onPaste.bind(this));
-
-        return this;
-    }
-
-    EmailsInput.prototype = {
-        isIE: window.document.documentMode,
-
-        validEmailCount: 0,
-
-        templates: {
-            main: function () {
+    var templates = {
+            main: function() {
                 return ' \
                 <div class="emails-form" \
                     tabIndex="-1"> \
@@ -68,7 +18,7 @@
                 </div>';
             },
 
-            tag: function (text, data) {
+            tag: function(text, data) {
                 var className = data ? data.className : '';
 
                 return ' \
@@ -85,7 +35,7 @@
                 </div>';
             },
             // TODO новые стили добавлять в этот массив
-            style: function () {
+            style: function() {
                 return [
                     '.emails-form {background: #FFFFFF; border: 1px solid #C3C2CF; box-sizing: border-box; border-radius: 4px; ' +
                     'min-height: 96px; max-height: 96px; overflow: auto; display: flex; align-items: flex-start; ' +
@@ -125,111 +75,147 @@
                     '    text-overflow: ellipsis;\n' +
                     '    display: inline-block;\n' +
                     '}'
-                ]
+                ];
             },
         },
-
-        testEmails: [
+        testEmails = [
             'john@miro.com',
             'invalid.email',
             'mike@miro.com',
             'alexander@miro.com'
         ],
-
-        onBlur: function (e) {
-            var text = e.target.textContent;
-            this.addEmail(text);
+        emailsForm = getNodeElement(templates.main()),
+        documentStyle = document.createElement('style'),
+        style = templates.style(),
+        fontLink = document.createElement('link'),
+        DOM = {
+            input: emailsForm.querySelector('.emails-form__input'),
+            emailsForm: emailsForm
         },
+        validEmailCount = 0,
+        isIE = window.document.documentMode;
 
-        onInput: function (e) {
-            var text = e.target.textContent.trim();
-            switch (e.key) {
-                case 'Enter':
-                case ',':
-                    e.preventDefault();
-                    this.addEmail(text);
+    fontLink.rel = 'stylesheet';
+    fontLink.href = 'https://fonts.googleapis.com/css2?family=Open+Sans&display=swap';
+
+    DOM.input.addEventListener('keypress', onInput);
+    DOM.input.addEventListener('blur', onBlur);
+    DOM.input.addEventListener('paste', onPaste);
+
+    function getNodeElement(template) {
+        var parser = new DOMParser(),
+            nodeEl = parser.parseFromString(template, 'text/html');
+
+        return nodeEl.body.firstElementChild;
+    }
+
+
+    function getValidEmailsCount() {
+        alert('Valid email count: ' + this.validEmailCount);
+    }
+
+    function isEmailValid(email) {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    }
+
+    function addEmail(text) {
+        if (!text) return;
+
+        DOM.input.textContent = '';
+
+        var isValid = isEmailValid(text),
+            data = {
+                className: isValid ? '' : 'emails-form__tag_invalid'
+            },
+            emailEl = getNodeElement(templates.tag(text.trim(), data)),
+            removeButton = emailEl.querySelector('.emails-form__tag-removeButton');
+
+        removeButton.addEventListener('click', removeEmail);
+        DOM.input.parentNode.insertBefore(emailEl, DOM.input);
+
+        if (isValid) {
+            validEmailCount++;
+        }
+
+        if (!isIE) DOM.emailsForm.scrollTo(0, DOM.emailsForm.scrollHeight);
+    }
+
+    function removeEmail(e) {
+        var emailEl = getEmailNode(e.target);
+        DOM.emailsForm.removeChild(emailEl);
+
+        if (!emailEl.classList.contains('emails-form__tag_invalid')) {
+            validEmailCount--;
+        }
+    }
+
+    function getEmailNode(node) {
+        if (node.classList.contains('emails-form__tag')) {
+            return node;
+        } else {
+            return getEmailNode(node.parentNode);
+        }
+    }
+
+    function onBlur(e) {
+        var text = e.target.textContent;
+        addEmail(text);
+    }
+
+    function onInput(e) {
+        var text = e.target.textContent.trim();
+        switch (e.key) {
+            case 'Enter':
+            case ',':
+                e.preventDefault();
+                addEmail(text);
+        }
+    }
+
+    function onPaste(e) {
+        e.preventDefault();
+        var pastedData = (e.clipboardData || window.clipboardData).getData('text');
+        if (pastedData) {
+            var emails = pastedData.split(',');
+            for (var i = 0; i < emails.length; i++) {
+                addEmail(emails[i].trim());
             }
-        },
+        }
+    }
 
-        onPaste: function(e) {
-            e.preventDefault();
-            var pastedData = (e.clipboardData || window.clipboardData).getData('text');
-            if (pastedData) {
-                var emails = pastedData.split(',');
-                for (var i = 0; i < emails.length; i++) {
-                    this.addEmail(emails[i].trim());
-                }
+    function getRandomInteger(min, max) {
+        var rand = min + Math.random() * (max + 1 - min);
+        return Math.floor(rand);
+    }
+
+
+    return function(inputContainer, options) {
+        inputContainer.appendChild(emailsForm);
+        document.head.appendChild(documentStyle);
+        document.head.appendChild(fontLink);
+
+
+        for (var i = 0; i < style.length; i++) {
+            documentStyle.sheet.insertRule(style[i], i);
+        }
+
+        // add test tags
+        for (var i = 0; i < testEmails.length; i++) {
+            addEmail(testEmails[i]);
+        }
+
+        return {
+            addRandomEmail: function() {
+                var email = Math.random().toString(36).substring(2, getRandomInteger(5, 11)),
+                    domain = Math.random().toString(36).substring(2, getRandomInteger(5, 9)),
+                    domainZone = Math.random().toString(36).replace(/[0-9]/g, '').substring(0, getRandomInteger(2, 4));
+
+                addEmail(email + '@' + domain + domainZone);
+            },
+            getValidEmailsCount: function() {
+                alert('Valid email count: ' + validEmailCount);
             }
-        },
-
-        addEmail: function (text) {
-            if (!text) return;
-
-            this.DOM.input.textContent = '';
-
-            var isEmailValid = this.isEmailValid(text),
-                data = {
-                    className: isEmailValid ? '' : 'emails-form__tag_invalid'
-                },
-                emailEl = this.getNodeElement(this.templates.tag(text.trim(), data)),
-                removeButton = emailEl.querySelector('.emails-form__tag-removeButton');
-
-            removeButton.addEventListener("click", this.removeEmail.bind(this));
-            this.DOM.input.parentNode.insertBefore(emailEl, this.DOM.input);
-
-            if (isEmailValid) {
-                this.validEmailCount++;
-            }
-
-            if (!this.isIE) this.DOM.emailsForm.scrollTo(0, this.DOM.emailsForm.scrollHeight);
-        },
-
-        removeEmail: function (e) {
-            var emailEl = this.getEmailNode(e.target);
-            this.DOM.emailsForm.removeChild(emailEl);
-
-            if (!emailEl.classList.contains('emails-form__tag_invalid')) {
-                this.validEmailCount--;
-            }
-        },
-
-        getEmailNode: function (node) {
-            if (node.classList.contains('emails-form__tag')) {
-                return node;
-            } else {
-                return this.getEmailNode(node.parentNode);
-            }
-        },
-
-        getNodeElement: function (template) {
-            var parser = new DOMParser(),
-                nodeEl = parser.parseFromString(template, "text/html");
-
-            return nodeEl.body.firstElementChild;
-        },
-
-        isEmailValid: function (email) {
-            var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(String(email).toLowerCase());
-        },
-
-        addRandomEmail: function () {
-            var email = Math.random().toString(36).substring(2, this.getRandomInteger(5, 11)),
-                domain = Math.random().toString(36).substring(2, this.getRandomInteger(5, 9)),
-                domainZone = Math.random().toString(36).replace(/[0-9]/g, '').substring(0, this.getRandomInteger(2, 4));
-
-            this.addEmail(email + '@' + domain + domainZone);
-        },
-
-        getRandomInteger: function (min, max) {
-            var rand = min + Math.random() * (max + 1 - min);
-            return Math.floor(rand);
-        },
-
-        getValidEmailsCount: function () {
-            alert('Valid email count: ' + this.validEmailCount);
         }
     };
-
-    return EmailsInput;
-}));
+}(window, document));
