@@ -17,32 +17,14 @@
         }
 
 
-        var emailsForm = this.getNodeElement(this.templates.main()),
-            documentStyle = document.createElement('style'),
-            style = this.templates.style();
+        var emailsForm = this.getNodeElement(this.templates.main());
 
         inputContainer.appendChild(emailsForm);
-
-        document.head.appendChild(documentStyle);
-        for (var i = 0; i < style.length; i++) {
-            documentStyle.sheet.insertRule(style[i], i);
-        }
-
-        // add google Open Sans font
-        var fontLink = document.createElement('link');
-        fontLink.rel = 'stylesheet';
-        fontLink.href = 'https://fonts.googleapis.com/css2?family=Open+Sans&display=swap';
-        document.head.appendChild(fontLink);
 
         this.DOM = {
             input: emailsForm.querySelector('.emails-form__input'),
             emailsForm: emailsForm
         };
-
-        // add test tags
-        for (var i = 0; i < this.testEmails.length; i++) {
-            this.addEmail(this.testEmails[i]);
-        }
 
         this.DOM.input.addEventListener("keypress", this.onInput.bind(this));
         this.DOM.input.addEventListener("blur", this.onBlur.bind(this));
@@ -83,58 +65,8 @@
                         </svg> \
                     </button> \
                 </div>';
-            },
-            // TODO новые стили добавлять в этот массив
-            style: function () {
-                return [
-                    '.emails-form {background: #FFFFFF; border: 1px solid #C3C2CF; box-sizing: border-box; border-radius: 4px; ' +
-                    'min-height: 96px; max-height: 96px; overflow: auto; display: flex; align-items: flex-start; ' +
-                    'flex-wrap: wrap; position: relative; width: 100%}',
-                    '.emails-form:focus {outline: 0; }',
-                    '.emails-form__input {position: relative; margin: 8px; min-width: 125px; flex: 1; display: block; }',
-                    '.emails-form__input:empty::before {position: absolute; content: attr(data-placeholder); color: #C3C2CF; ' +
-                    'top: 0; bottom: 0; white-space: nowrap; }',
-                    '.emails-form__input:focus {outline: 0; }',
-                    '.emails-form__tag {display: inline-flex; align-items: center; margin: 8px 0 4px 8px; position: relative; ' +
-                    '   background: rgba(102, 153, 255, 0.2); border-radius: 100px;}',
-                    '.emails-form__tag > div { box-sizing: border-box; padding: 0 4px 0 10px; max-height: 24px;}',
-                    '.emails-form__tag-removeButton {\n' +
-                    '    display: inline-flex;\n' +
-                    '    justify-content: center;\n' +
-                    '    align-items: center;\n' +
-                    '    cursor: pointer;\n' +
-                    '    color: black;\n' +
-                    '    width: 14px;\n' +
-                    '    height: 14px;\n' +
-                    '    outline: none;\n' +
-                    '    border: none;\n' +
-                    '    background: none;\n' +
-                    '    border-radius: 0;\n' +
-                    '    padding: 0;\n' +
-                    '    margin-right: 6px;\n' +
-                    '}',
-                    '.emails-form__tag_invalid {\n' +
-                    '    background: none;\n' +
-                    '    border-radius: 0;\n' +
-                    '    border-bottom: 1px dashed #D92929;\n' +
-                    '}',
-                    '.emails-form__tag-text {\n' +
-                    '    overflow: hidden;\n' +
-                    '    white-space: nowrap;\n' +
-                    '    -ms-text-overflow: ellipsis;\n' +
-                    '    text-overflow: ellipsis;\n' +
-                    '    display: inline-block;\n' +
-                    '}'
-                ]
-            },
+            }
         },
-
-        testEmails: [
-            'john@miro.com',
-            'invalid.email',
-            'mike@miro.com',
-            'alexander@miro.com'
-        ],
 
         onBlur: function (e) {
             var text = e.target.textContent;
